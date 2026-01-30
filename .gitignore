@@ -1,0 +1,6 @@
+models/embedder_arcface.onnx
+*_history_*.txt
+data/
+__pycache__/
+*.pyc
+
