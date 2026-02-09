@@ -344,7 +344,7 @@ def main():
     db = load_db_npz(db_path)
     matcher = FaceDBMatcher(db=db, dist_thresh=0.34)
 
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(1)
     if not cap.isOpened():
         raise RuntimeError("Camera not available")
 

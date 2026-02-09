@@ -1,4 +1,4 @@
-TARGET_IDENTITY = "Kevine"      # Must match enrolled name
+TARGET_IDENTITY = "livia"      # Must match enrolled name
 LOCK_THRESHOLD = 0.6
 
 MAX_LOST_FRAMES = 30

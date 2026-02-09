@@ -19,6 +19,7 @@ import time
 import cv2
 import numpy as np
 import onnxruntime as ort
+import os
 
 from .haar_5pt import Haar5ptDetector, align_face_5pt
 
@@ -52,7 +53,28 @@ class ArcFaceEmbedderONNX:
         self.in_w, self.in_h = input_size
         self.debug = debug
 
-        self.sess = ort.InferenceSession(model_path, providers=["CPUExecutionProvider"])
+        # Quick sanity checks before creating the ONNXRuntime session
+        if not os.path.exists(model_path):
+            raise FileNotFoundError(
+                f"ONNX model not found: {model_path}.\n"
+                "Place a valid ArcFace ONNX model at this path or update the model_path argument."
+            )
+
+        size = os.path.getsize(model_path)
+        if size < 1024 * 50:  # arbitrary small-size threshold (50KB)
+            raise RuntimeError(
+                f"ONNX model file appears too small ({size} bytes): {model_path}.\n"
+                "It may be a placeholder or corrupted download. Please download a full ArcFace ONNX model."
+            )
+
+        try:
+            self.sess = ort.InferenceSession(model_path, providers=["CPUExecutionProvider"])
+        except Exception as e:
+            raise RuntimeError(
+                f"Failed to load ONNX model '{model_path}': {e}\n"
+                "Ensure the file is a valid ONNX model (not an HTML error page or placeholder)."
+            )
+
         self.in_name = self.sess.get_inputs()[0].name
         self.out_name = self.sess.get_outputs()[0].name
 
@@ -150,7 +172,7 @@ def cosine_similarity(a: np.ndarray, b: np.ndarray) -> float:
 # -------------------------
 
 def main():
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(1)
 
     det = Haar5ptDetector(
         min_size=(70, 70),
