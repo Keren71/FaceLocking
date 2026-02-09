@@ -8,6 +8,8 @@ data/enroll/*
 !data/db/.gitkeep
 !data/enroll/.gitkeep
 
+.venv/
 __pycache__/
 *.pyc
+
 
